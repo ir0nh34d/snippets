@@ -7,7 +7,7 @@ OBJS := $(SRCS:.cpp=.o)
 
 CXXFLAGS :=  -Wall -Wextra -Werror -Wundef
 
-LDFLAGS := -mwindows
+LDFLAGS :=
 
 CXX := g++
 

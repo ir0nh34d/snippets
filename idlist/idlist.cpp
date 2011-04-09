@@ -1,38 +1,28 @@
-#define UNICODE
+#define _WIN32_WINNT 0x0600
 
 #include <windows.h>
 #include <shlobj.h>
 #include <stdio.h>
-#include <Shlwapi.h>
-
-#ifdef __GNUC__
-#define UNUSED __attribute__((unused))
-#else
-#define UNUSED
-#endif
 
 typedef HANDLE (WINAPI *lpfnSHAllocShared)(const void*, DWORD, DWORD);
 typedef BOOL (WINAPI *lpfnSHFreeShared)(HANDLE, DWORD);
 
-int WINAPI WinMain (HINSTANCE hInstance UNUSED,
-                    HINSTANCE hPrevInstance UNUSED,
-                    LPSTR lpCmdLine UNUSED,
-                    int nCmdShow UNUSED)
+int main(void)
 {
   HANDLE sharedMem = NULL;
   DWORD currentProcess = GetCurrentProcessId();
   LPITEMIDLIST pidl = NULL;
-  WCHAR command[MAX_PATH];
+  char command[MAX_PATH];
   SHELLEXECUTEINFO sei;
-  HMODULE shlwapiDLL = LoadLibrary(L"shlwapi.dll");
+  HMODULE shlwapiDLL = LoadLibrary("shlwapi.dll");
   int ret = 1;
   lpfnSHAllocShared SHAllocShared = (lpfnSHAllocShared)GetProcAddress(shlwapiDLL, "SHAllocShared");
   lpfnSHFreeShared SHFreeShared = (lpfnSHFreeShared)GetProcAddress(shlwapiDLL, "SHFreeShared");
 
   ZeroMemory(&sei, sizeof(sei));
   sei.cbSize = sizeof(sei);
-  sei.fMask = SEE_MASK_UNICODE | SEE_MASK_NOCLOSEPROCESS;
-  sei.lpFile = L"c:\\windows\\explorer.exe";
+  sei.fMask = SEE_MASK_UNICODE | SEE_MASK_NOCLOSEPROCESS | SEE_MASK_FLAG_DDEWAIT;
+  sei.lpFile = "c:\\windows\\explorer.exe";
   sei.nShow = SW_SHOW;
   sei.hwnd = GetDesktopWindow();
 
@@ -45,12 +35,19 @@ int WINAPI WinMain (HINSTANCE hInstance UNUSED,
 
           if (sharedMem)
             {
-              swprintf(command, L"/idlist,:%d:%d", sharedMem, currentProcess);
+              sprintf(command, "/idlist,:%ld:%ld", (long)sharedMem, (long)currentProcess);
               sei.lpParameters = command;
-              ShellExecuteEx(&sei);
-              WaitForSingleObject(sei.hProcess, INFINITE);
+              if (ShellExecuteEx(&sei))
+                {
+                  if (!sei.hProcess)
+                    fprintf(stdout, "hProcess is NULL\n");
+                  WaitForSingleObject(sei.hProcess, INFINITE);
+                  ret = 0;
+                  fprintf(stdout, "Finished: successful\n");
+                }
+              else
+                fprintf(stdout, "Finished: unsuccessful\n");
               SHFreeShared(sharedMem, currentProcess);
-              ret = 0;
             }
         }
     }
