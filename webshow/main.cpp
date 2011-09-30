@@ -37,7 +37,6 @@ int main(void)
                                                         "CreateURLMoniker");
   if (pfnShowHTMLDialog && pfnCreateURLMoniker)
     {
-      MessageBox(GetDesktopWindow(), L"Found Funcs", L"webshow", MB_OK|MB_TOPMOST);
       IMoniker *pURLMoniker;
       BSTR bstrURL = SysAllocString(L"http://sites.google.com/site/emergedesktop/Home");
       (*pfnCreateURLMoniker)(NULL, bstrURL, &pURLMoniker);
