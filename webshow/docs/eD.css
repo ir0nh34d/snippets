@@ -1,0 +1,59 @@
+body         {
+	font-size: 10pt;
+	font-family: Verdana, Geneva, Arial, Helvetica, sans-serif;
+	color: Black;
+	margin-left : 10px;
+	margin-right : 10px;
+	margin-top : 10px;
+}
+
+a:link       {
+	background-color: White;
+	color: Navy;
+	font-family: Verdana, Geneva, Arial, Helvetica, sans-serif;
+	font-size: 10pt;
+	font-weight: bold;
+	text-decoration : none;
+}
+a:visited    {
+	background-color: White;
+	color: Navy;
+	font-size: 10pt;
+	font-family: Verdana, Geneva, Arial, Helvetica, sans-serif;
+	font-weight: bold;
+	text-decoration : none;
+}
+a:hover      {
+	background-color: #6699CC;
+	color: White;
+	font-family: Verdana, Geneva, Arial, Helvetica, sans-serif;
+	font-size: 10pt;
+	font-weight: bold;
+	text-decoration : none;
+}
+H1 {
+	font-size : 26;
+	font-family : Verdana, Geneva, Arial, Helvetica, sans-serif;
+	color : Navy;
+}
+H2 {
+	font-size : 20;
+	font-family : Verdana, Geneva, Arial, Helvetica, sans-serif;
+	color : Navy;
+}
+H3 {
+	font-size : 16;
+	font-family : Verdana, Geneva, Arial, Helvetica, sans-serif;
+}
+
+EM {
+	font-size: 10pt;
+	font-family: Verdana, Geneva, Arial, Helvetica, sans-serif;
+	color : #6699CC;
+	font-weight : bold;
+	font-style : normal;
+}
+DFN {
+	font-family : Symbol;
+	font-style: normal;
+}
