@@ -1,26 +1,46 @@
 #define UNICODE 1
 
 #include <windows.h>
-#include <mshtmhst.h>
+
+typedef HRESULT STDAPICALLTYPE SHOWHTMLDIALOGFN (
+    HWND hwndParent,
+    IMoniker *pMk,
+    VARIANT *pvarArgIn,
+    WCHAR *pchOptions,
+    VARIANT *pvarArgOut
+);
+
+typedef HRESULT STDAPICALLTYPE CreateURLMoniker(
+    IMoniker *pMkCtx,
+    LPCWSTR szURL,
+    IMoniker **ppmk
+);
 
 int main(void)
 {
   HINSTANCE hinstMSHTML = LoadLibrary(TEXT("MSHTML.DLL"));
+  HINSTANCE hinstURLMON = LoadLibrary(TEXT("URLMON.DLL"));
 
-  if (hinstMSHTML == NULL)
+  if ((hinstMSHTML == NULL) || (hinstURLMON == NULL))
     {
       // Error loading module -- fail as securely as possible
       return 1;
     }
 
+  OleInitialize(NULL);
+
   SHOWHTMLDIALOGFN* pfnShowHTMLDialog;
   pfnShowHTMLDialog = (SHOWHTMLDIALOGFN*)GetProcAddress(hinstMSHTML,
                                                         "ShowHTMLDialog");
-  if (pfnShowHTMLDialog)
+  CreateURLMoniker* pfnCreateURLMoniker;
+  pfnCreateURLMoniker = (CreateURLMoniker*)GetProcAddress(hinstURLMON,
+                                                        "CreateURLMoniker");
+  if (pfnShowHTMLDialog && pfnCreateURLMoniker)
     {
+      MessageBox(GetDesktopWindow(), L"Found Funcs", L"webshow", MB_OK|MB_TOPMOST);
       IMoniker *pURLMoniker;
       BSTR bstrURL = SysAllocString(L"http://sites.google.com/site/emergedesktop/Home");
-      CreateURLMoniker(NULL, bstrURL, &pURLMoniker);
+      (*pfnCreateURLMoniker)(NULL, bstrURL, &pURLMoniker);
 
       if (pURLMoniker)
         {
@@ -32,6 +52,9 @@ int main(void)
     }
 
   FreeLibrary(hinstMSHTML);
+  FreeLibrary(hinstURLMON);
+
+  OleUninitialize();
 
   return 0;
 }
