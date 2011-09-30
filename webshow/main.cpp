@@ -20,14 +20,16 @@ int main(void)
 {
   HINSTANCE hinstMSHTML = LoadLibrary(TEXT("MSHTML.DLL"));
   HINSTANCE hinstURLMON = LoadLibrary(TEXT("URLMON.DLL"));
+  WCHAR docs[MAX_PATH], fullpath[MAX_PATH];
+
+  wcscpy(docs, L".\\docs\\the_basics.html");
+  GetFullPathName(docs, MAX_PATH, fullpath, NULL);
 
   if ((hinstMSHTML == NULL) || (hinstURLMON == NULL))
     {
       // Error loading module -- fail as securely as possible
       return 1;
     }
-
-  OleInitialize(NULL);
 
   SHOWHTMLDIALOGFN* pfnShowHTMLDialog;
   pfnShowHTMLDialog = (SHOWHTMLDIALOGFN*)GetProcAddress(hinstMSHTML,
@@ -38,7 +40,7 @@ int main(void)
   if (pfnShowHTMLDialog && pfnCreateURLMoniker)
     {
       IMoniker *pURLMoniker;
-      BSTR bstrURL = SysAllocString(L"http://sites.google.com/site/emergedesktop/Home");
+      BSTR bstrURL = SysAllocString(fullpath);
       (*pfnCreateURLMoniker)(NULL, bstrURL, &pURLMoniker);
 
       if (pURLMoniker)
@@ -52,8 +54,6 @@ int main(void)
 
   FreeLibrary(hinstMSHTML);
   FreeLibrary(hinstURLMON);
-
-  OleUninitialize();
 
   return 0;
 }
