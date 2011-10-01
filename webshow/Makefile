@@ -7,7 +7,7 @@ OBJS := $(SRCS:.c=.o)
 
 CFLAGS :=  -Wall -Wextra -Werror -Wundef
 
-LDFLAGS := -Wl,--subsystem,windows -shared-libgcc \
+LDFLAGS := -Wl,--subsystem,windows -static-libgcc \
 		-Wl,--enable-auto-import -loleaut32 -lole32
 
 CC := gcc
