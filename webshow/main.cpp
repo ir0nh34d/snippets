@@ -10,7 +10,7 @@ typedef HRESULT STDAPICALLTYPE SHOWHTMLDIALOGFN (
     VARIANT *pvarArgOut
 );
 
-typedef HRESULT STDAPICALLTYPE CreateURLMoniker(
+typedef HRESULT STDAPICALLTYPE MSCreateURLMoniker(
     IMoniker *pMkCtx,
     LPCWSTR szURL,
     IMoniker **ppmk
@@ -18,6 +18,8 @@ typedef HRESULT STDAPICALLTYPE CreateURLMoniker(
 
 int main(void)
 {
+  OleInitialize(NULL);
+
   HINSTANCE hinstMSHTML = LoadLibrary(TEXT("MSHTML.DLL"));
   HINSTANCE hinstURLMON = LoadLibrary(TEXT("URLMON.DLL"));
   WCHAR docs[MAX_PATH], fullpath[MAX_PATH];
@@ -31,11 +33,11 @@ int main(void)
       return 1;
     }
 
-  SHOWHTMLDIALOGFN* pfnShowHTMLDialog;
+  SHOWHTMLDIALOGFN *pfnShowHTMLDialog;
   pfnShowHTMLDialog = (SHOWHTMLDIALOGFN*)GetProcAddress(hinstMSHTML,
                                                         "ShowHTMLDialog");
-  CreateURLMoniker* pfnCreateURLMoniker;
-  pfnCreateURLMoniker = (CreateURLMoniker*)GetProcAddress(hinstURLMON,
+  MSCreateURLMoniker *pfnCreateURLMoniker;
+  pfnCreateURLMoniker = (MSCreateURLMoniker*)GetProcAddress(hinstURLMON,
                                                         "CreateURLMoniker");
   if (pfnShowHTMLDialog && pfnCreateURLMoniker)
     {
@@ -54,6 +56,8 @@ int main(void)
 
   FreeLibrary(hinstMSHTML);
   FreeLibrary(hinstURLMON);
+
+  OleUninitialize();
 
   return 0;
 }
